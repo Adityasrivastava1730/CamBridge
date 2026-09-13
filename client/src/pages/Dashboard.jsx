@@ -39,11 +39,6 @@ function Dashboard(){
 
 
         try{
-
-
-            setLoading(true);
-
-
             const token = localStorage.getItem("token");
 
 
@@ -102,7 +97,6 @@ function Dashboard(){
         }
 
         finally{
-
 
             setLoading(false);
 
