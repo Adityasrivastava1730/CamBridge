@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import socket from "../socket/socket";
 
-const rtcConfig = { iceServers:[{ urls:"stun:stun.l.google.com:19302" }] };
+const rtcConfig = {
+    iceServers:[
+        { urls:"stun:stun.l.google.com:19302" },
+        { urls:"stun:stun.cloudflare.com:3478" }
+    ],
+    iceCandidatePoolSize:10
+};
 
 function PhoneCamera(){
     const { id } = useParams();
@@ -17,7 +23,6 @@ function PhoneCamera(){
 
     useEffect(() => {
         let active = true;
-        let offerSent = false;
         let cleanup = () => {};
 
         const start = async () => {
@@ -40,12 +45,15 @@ function PhoneCamera(){
                 };
 
                 const handleViewerReady = async () => {
-                    if (!active || offerSent) return;
-                    offerSent = true;
-                    const offer = await peer.createOffer();
-                    await peer.setLocalDescription(offer);
-                    socket.emit("offer", { room:id, offer });
-                    setStatus("Streaming to browser");
+                    if (!active || peer.signalingState !== "stable") return;
+                    try {
+                        const offer = await peer.createOffer();
+                        await peer.setLocalDescription(offer);
+                        socket.emit("offer", { room:id, offer });
+                        setStatus("Streaming to browser");
+                    } catch (offerError) {
+                        setError(offerError.message || "Could not start video stream");
+                    }
                 };
                 const handleAnswer = async (answer) => {
                     if (peer.signalingState === "have-local-offer") {
