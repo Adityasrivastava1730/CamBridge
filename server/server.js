@@ -64,6 +64,9 @@ io.on("connection", (socket) => {
                     socket.emit("viewer-ready");
                 }
             } else {
+                if (camera.isConnected && camera.status === "online") {
+                    socket.emit("camera-online");
+                }
                 socket.to(room).emit("viewer-ready");
             }
             socket.emit("joined-room", { room, type });
