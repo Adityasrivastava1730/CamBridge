@@ -1,0 +1,3 @@
+cd D:\CamBridge\client
+npm run dev
+ngrok http 5174
