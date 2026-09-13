@@ -123,7 +123,11 @@ function Dashboard(){
 
     useEffect(()=>{
         const timer = window.setTimeout(fetchDashboard, 0);
-        return () => window.clearTimeout(timer);
+        const refreshTimer = window.setInterval(fetchDashboard, 5000);
+        return () => {
+            window.clearTimeout(timer);
+            window.clearInterval(refreshTimer);
+        };
     },[]);
 
     const addCamera = async()=>{
