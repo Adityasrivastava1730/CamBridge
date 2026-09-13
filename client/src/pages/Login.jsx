@@ -26,7 +26,6 @@ function Login() {
     },[navigate]);
 
 
-
     const handleChange = (e)=>{
 
         setForm({
@@ -37,36 +36,21 @@ function Login() {
     };
 
 
-
     const handleSubmit = async(e)=>{
 
         e.preventDefault();
 
-
         try{
 
-            const response = await api.post(
-                "/auth/login",
-                form
-            );
+            const response = await api.post("/auth/login", form);
 
-
-            localStorage.setItem(
-                "token",
-                response.data.token
-            );
-
-
+            localStorage.setItem("token", response.data.token);
             navigate("/dashboard");
-
 
         }catch(error){
 
-            console.log(
-                error.response?.data || error.message
-            );
-
-            alert("Invalid Email or Password");
+            console.log(error.response?.data || error.message);
+            alert(error.response?.data?.message || "Invalid Email or Password");
 
         }
 
